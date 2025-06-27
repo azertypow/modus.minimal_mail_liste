@@ -78,6 +78,19 @@ router
             return
         }
     })
+    .get("/api/mail_list/list", async (context) => {
+        const mail_list: unknown[] = [];
+        for await (const entry of kv.list({ prefix: ["mail_list"] })) {
+            mail_list.push({
+                id: entry.key[1],
+                ...(entry.value as Record<string, unknown>)
+            });
+        }
+        context.response.body = mail_list;
+    })
+    .get("/", (context) => {
+        context.response.body = "Service ready to receive emails on /api/mail_list/add";
+    })
 
 app.use(router.routes())
 app.use(router.allowedMethods())
